@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createStore } from 'redux';
 import { act } from 'react-dom/test-utils';
+import { Provider } from 'react-redux';
 
 const rootReducer = (state = {persons: []}, action) => {
   console.warn("rootReducer", state, action);
@@ -27,14 +28,20 @@ store.subscribe(() => {
   console.warn("data changed", store.getState());
 });
 
-store.dispatch({type: 'PERSONS_LOADED', persons: [1, 2, 3]});
-store.dispatch({type: 'PERSONS_LOADED', persons: [4, 5]});
+function loadList() {
+  fetch("http://localhost:3000/teams-json")
+    .then(res => res.json())
+    .then(persons => {
+      store.dispatch({type: 'PERSONS_LOADED', persons});
+    });
+}
 
+loadList();
 
 ReactDOM.render(
-  <React.StrictMode>
+  <Provider store = {store}>
     <App />
-  </React.StrictMode>,
+  </Provider>,
   document.getElementById('root')
 );
 
