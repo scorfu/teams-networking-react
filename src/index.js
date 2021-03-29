@@ -3,6 +3,33 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { createStore } from 'redux';
+import { act } from 'react-dom/test-utils';
+
+const rootReducer = (state = {persons: []}, action) => {
+  console.warn("rootReducer", state, action);
+  switch (action.type) {
+    case 'PERSONS_LOADED': {
+      return {
+        persons: action.persons
+      }
+    }
+    default:
+      return state;
+  }
+  
+};
+
+const store = createStore(rootReducer);
+console.warn('store', store);
+
+store.subscribe(() => {
+  console.warn("data changed", store.getState());
+});
+
+store.dispatch({type: 'PERSONS_LOADED', persons: [1, 2, 3]});
+store.dispatch({type: 'PERSONS_LOADED', persons: [4, 5]});
+
 
 ReactDOM.render(
   <React.StrictMode>
